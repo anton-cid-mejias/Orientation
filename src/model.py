@@ -6,31 +6,35 @@ from src import utils, loss
 
 def orientation_graph(input_image):
 
-    x = KL.Conv2D(64, (3, 3), padding="same", activation='relu', name="or_conv1")(input_image)
+    x = KL.Conv2D(32, (3, 3), padding="valid", activation='relu', name="or_conv1")(input_image)
     x = KL.MaxPooling2D(pool_size=(2, 2), name="or_pool1")(x)
     x = KL.BatchNormalization(name='or_conv_bn1')(x)
 
-    x = KL.Conv2D(128, (3, 3), padding="same", activation='relu', name="or_conv2")(x)
+    x = KL.Conv2D(64, (3, 3), padding="same", activation='relu', name="or_conv2")(x)
     x = KL.MaxPooling2D(pool_size=(2, 2), name="or_pool2")(x)
     x = KL.BatchNormalization(name='or_conv_bn2')(x)
 
-    x = KL.Conv2D(256, (3, 3), padding="same", activation='relu', name="or_conv3")(x)
+    x = KL.Conv2D(128, (3, 3), padding="same", activation='relu', name="or_conv3")(x)
     x = KL.MaxPooling2D(pool_size=(2, 2), name="or_pool3")(x)
     x = KL.BatchNormalization(name='or_conv_bn3')(x)
 
-    x = KL.Conv2D(512, (3, 3), padding="same", activation='relu', name="or_conv4")(x)
+    x = KL.Conv2D(256, (3, 3), padding="same", activation='relu', name="or_conv4")(x)
     x = KL.MaxPooling2D(pool_size=(2, 2), name="or_pool4")(x)
     x = KL.BatchNormalization(name='or_conv_bn4')(x)
 
     x = KL.Flatten()(x)
 
     x = KL.Dense(1024, name="or_dense1")(x)
-    x = KL.Activation('relu')(x)
+    x = KL.LeakyReLU(alpha=0.3)(x)
     x = KL.BatchNormalization(name='or_bn1')(x)
 
-    x = KL.Dense(512, name="or_dense2")(x)
-    x = KL.Activation('relu')(x)
+    x = KL.Dense(1024, name="or_dense2")(x)
+    x = KL.LeakyReLU(alpha=0.3)(x)
     x = KL.BatchNormalization(name='or_bn2')(x)
+
+    x = KL.Dense(1024, name="or_dense3")(x)
+    x = KL.LeakyReLU(alpha=0.3)(x)
+    x = KL.BatchNormalization(name='or_bn3')(x)
 
     x = KL.Dense(6, name='6d_output')(x)
 
@@ -64,12 +68,6 @@ class OrientationModel():
         return model
 
     def compile(self):
-        lr_schedule = tf.compat.v1.keras.optimizers.schedules.ExponentialDecay(
-            self.config.LEARNING_RATE,
-            decay_steps=1000,#100000,
-            decay_rate=0.96,
-            staircase=True)
-
         optimizer = keras.optimizers.Adam(lr=self.config.LEARNING_RATE)
 
         self.keras_model.compile(optimizer=optimizer, loss=loss.orientation_loss_graph)
@@ -88,7 +86,7 @@ class OrientationModel():
                 save_best_only=True,
                 monitor='val_loss',
                 verbose=1,
-                period=100)
+                period=1000)
         ]
 
         # Tensorboard
@@ -97,10 +95,10 @@ class OrientationModel():
 
         # Scheduler
         def scheduler(epoch):
-            if epoch < 1000:
+            if epoch < 10000:
                 return self.config.LEARNING_RATE
             else:
-                return self.config.LEARNING_RATE * tf.math.exp(0.1 * (1000 - epoch))
+                return self.config.LEARNING_RATE * 0.1
 
         scheduler_cbk = keras.callbacks.LearningRateScheduler(scheduler)
         callbacks.append(scheduler_cbk)
