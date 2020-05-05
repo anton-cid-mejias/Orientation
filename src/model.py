@@ -1,34 +1,43 @@
 import keras.layers as KL
 import keras
 import tensorflow as tf
+from keras.regularizers import l2
 
 from src import utils, loss
 
 def orientation_graph(input_image):
 
-    x = KL.Conv2D(32, (5, 5), padding="valid", activation='relu', name="or_conv1")(input_image)
+    x = KL.Conv2D(16, (5, 5), padding="valid", activation='relu', kernel_regularizer=l2(0.01),
+                  bias_regularizer=l2(0.01), name="or_conv1")(input_image)
     x = KL.MaxPooling2D(pool_size=(2, 2), name="or_pool1")(x)
     x = KL.BatchNormalization(name='or_conv_bn1')(x)
 
-    x = KL.Conv2D(64, (5, 5), padding="valid", activation='relu', name="or_conv2")(x)
+    x = KL.Conv2D(32, (5, 5), padding="valid", activation='relu', kernel_regularizer=l2(0.01),
+                  bias_regularizer=l2(0.01), name="or_conv2")(x)
     x = KL.MaxPooling2D(pool_size=(2, 2), name="or_pool2")(x)
     x = KL.BatchNormalization(name='or_conv_bn2')(x)
 
-    x = KL.Conv2D(128, (3, 3), padding="valid", activation='relu', name="or_conv3")(x)
+    x = KL.Conv2D(64, (3, 3), padding="valid", activation='relu', kernel_regularizer=l2(0.01),
+                  bias_regularizer=l2(0.01), name="or_conv3")(x)
     x = KL.MaxPooling2D(pool_size=(2, 2), name="or_pool3")(x)
     x = KL.BatchNormalization(name='or_conv_bn3')(x)
 
+    x = KL.Conv2D(128, (3, 3), padding="valid", activation='relu', kernel_regularizer=l2(0.01),
+                  bias_regularizer=l2(0.01), name="or_conv4")(x)
+    x = KL.MaxPooling2D(pool_size=(2, 2), name="or_pool4")(x)
+    x = KL.BatchNormalization(name='or_conv_bn4')(x)
+
     x = KL.Flatten()(x)
 
-    x = KL.Dense(1024, name="or_dense1")(x)
+    x = KL.Dense(1024, name="or_dense1", kernel_regularizer=l2(0.01), bias_regularizer=l2(0.01),)(x)
     x = KL.LeakyReLU(alpha=0.3)(x)
     x = KL.BatchNormalization(name='or_bn1')(x)
 
-    x = KL.Dense(1024, name="or_dense2")(x)
+    x = KL.Dense(1024, name="or_dense2", kernel_regularizer=l2(0.01), bias_regularizer=l2(0.01),)(x)
     x = KL.LeakyReLU(alpha=0.3)(x)
     x = KL.BatchNormalization(name='or_bn2')(x)
 
-    x = KL.Dense(1024, name="or_dense3")(x)
+    x = KL.Dense(1024, name="or_dense3", kernel_regularizer=l2(0.01), bias_regularizer=l2(0.01),)(x)
     x = KL.LeakyReLU(alpha=0.3)(x)
     x = KL.BatchNormalization(name='or_bn3')(x)
 

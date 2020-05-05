@@ -2,8 +2,8 @@ from src.data import FiguresDataset, load_figures_data
 from src import train, config
 
 def main():
-    train_path = "data/train"
-    val_path = "data/val"
+    train_path = "data/Cube/train"
+    val_path = "data/Cube/val"
     config_ = config.Config
 
     dataset_train = FiguresDataset()
