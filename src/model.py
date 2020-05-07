@@ -1,29 +1,28 @@
 import keras.layers as KL
 import keras
-import tensorflow as tf
 from keras.regularizers import l2
 
 from src import utils, loss
 
 def orientation_graph(input_image):
 
-    x = KL.Conv2D(16, (5, 5), padding="valid", activation='relu', kernel_regularizer=l2(0.01),
-                  bias_regularizer=l2(0.01), name="or_conv1")(input_image)
+    x = KL.Conv2D(16, (5, 5), padding="valid", activation='relu', kernel_regularizer=l2(0.0001),
+                  bias_regularizer=l2(0.0001), name="or_conv1")(input_image)
     x = KL.MaxPooling2D(pool_size=(2, 2), name="or_pool1")(x)
     x = KL.BatchNormalization(name='or_conv_bn1')(x)
 
-    x = KL.Conv2D(32, (5, 5), padding="valid", activation='relu', kernel_regularizer=l2(0.01),
-                  bias_regularizer=l2(0.01), name="or_conv2")(x)
+    x = KL.Conv2D(32, (5, 5), padding="valid", activation='relu', kernel_regularizer=l2(0.0001),
+                  bias_regularizer=l2(0.0001), name="or_conv2")(x)
     x = KL.MaxPooling2D(pool_size=(2, 2), name="or_pool2")(x)
     x = KL.BatchNormalization(name='or_conv_bn2')(x)
 
-    x = KL.Conv2D(64, (3, 3), padding="valid", activation='relu', kernel_regularizer=l2(0.01),
-                  bias_regularizer=l2(0.01), name="or_conv3")(x)
+    x = KL.Conv2D(64, (3, 3), padding="valid", activation='relu', kernel_regularizer=l2(0.0001),
+                  bias_regularizer=l2(0.0001), name="or_conv3")(x)
     x = KL.MaxPooling2D(pool_size=(2, 2), name="or_pool3")(x)
     x = KL.BatchNormalization(name='or_conv_bn3')(x)
 
-    x = KL.Conv2D(128, (3, 3), padding="valid", activation='relu', kernel_regularizer=l2(0.01),
-                  bias_regularizer=l2(0.01), name="or_conv4")(x)
+    x = KL.Conv2D(128, (3, 3), padding="valid", activation='relu', kernel_regularizer=l2(0.0001),
+                  bias_regularizer=l2(0.0001), name="or_conv4")(x)
     x = KL.MaxPooling2D(pool_size=(2, 2), name="or_pool4")(x)
     x = KL.BatchNormalization(name='or_conv_bn4')(x)
 
@@ -72,8 +71,12 @@ class OrientationModel():
 
         return model
 
-    def compile(self):
+    def compile(self, weights=None):
         optimizer = keras.optimizers.Adam(lr=self.config.LEARNING_RATE)
+
+        if weights is not None:
+            print("Loading weights \"%s\"..." % weights)
+            self.keras_model.load_weights(weights)
 
         self.keras_model.compile(optimizer=optimizer, loss=loss.orientation_loss_graph)
 
