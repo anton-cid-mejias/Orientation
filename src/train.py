@@ -1,7 +1,17 @@
 from src import model
+from scipy.spatial.transform import Rotation as R
 
 def train(train_data, val_data, config, epochs=100, weights=None):
 
+    # Transform euler angles to rotation matrices
+    x_train = train_data[0]
+    y_train = train_data[1]
+    y_train = R.from_euler('ZYX', y_train, degrees=True).as_matrix()
+
+    x_val= val_data[0]
+    y_val = val_data[1]
+    y_val = R.from_euler('ZYX', y_val, degrees=True).as_matrix()
+
     or_model = model.OrientationModel("logs", config)
     or_model.compile(weights)
-    or_model.train(train_data[0], train_data[1], val_data[0], val_data[1], epochs)
+    or_model.train(x_train, y_train, x_val, y_val, epochs)

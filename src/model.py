@@ -78,7 +78,7 @@ class OrientationModel():
             print("Loading weights \"%s\"..." % weights)
             self.keras_model.load_weights(weights)
 
-        self.keras_model.compile(optimizer=optimizer, loss=loss.orientation_loss_graph)
+        self.keras_model.compile(optimizer=optimizer, loss=loss.orientation_loss)
 
     def train(self, images, gt_orientations, val_images, val_gt_orientations, epochs):
 
