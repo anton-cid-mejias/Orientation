@@ -118,14 +118,9 @@ def compute_rotation_matrix_from_ortho6d(ortho6d):
     matrix = tf.concat((x, y, z), 2)  # batch*3*3
     return matrix
 
+# http://www.boris-belousov.net/2016/12/01/quat-dist/
 def compute_geodesic_distance_from_two_matrices(m1, m2):
-    # Remove batch dimension
-    m1 = tf.reshape(m1, (-1, 3))
-    m2 = tf.reshape(m2, (-1, 3))
-
-    m = tf.matmul(m1, tf.transpose(m2))
-
-    m = tf.reshape(m, (-1, 3, 3))
+    m = tf.matmul(m1, tf.transpose(m2, perm=[0, 2, 1]))
 
     cos = (m[:, 0, 0] + m[:, 1, 1] + m[:, 2, 2] - 1) / 2
     cos = tf.clip_by_value(cos, clip_value_min=-1, clip_value_max=1)
