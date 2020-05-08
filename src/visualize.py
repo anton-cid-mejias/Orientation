@@ -9,7 +9,6 @@ def show_results(images, predictions):
         rotation = R.from_matrix(rot_matrix)
         quat = rotation.as_quat()
         euler = rotation.as_euler('ZYX', degrees=True)
-        euler = rotation.as_euler('zyx', degrees=True)
 
         fig, ax = plt.subplots(figsize=(30, 30))
 

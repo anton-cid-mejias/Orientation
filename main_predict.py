@@ -1,4 +1,4 @@
-from src.data import FiguresDataset, load_figures_data
+from src.coco_data import FiguresDataset, load_figures_data
 from src import model, detect, visualize
 from src.config import Config
 
