@@ -4,7 +4,7 @@ from src.config import Config
 
 def main():
     val_path = "data/Cube/val"
-    weights = "logs/Cube_test/orientations_7900.h5"
+    weights = "logs/orientations_1200.h5"
     config = Config()
 
     dataset_val = FiguresDataset()
@@ -12,6 +12,7 @@ def main():
     dataset_val.prepare()
 
     val_images, _ = load_figures_data(dataset_val, config)
+    val_images = val_images
 
     # Loading model and weights
     or_model = model.OrientationModel("logs", config)

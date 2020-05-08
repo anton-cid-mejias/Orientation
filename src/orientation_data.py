@@ -1,9 +1,9 @@
-from PIL import Image
 import glob
 import numpy as np
 import pandas as pd
 from src.coco_data import resize_image
 from tqdm import tqdm
+import skimage.io
 
 def get_mask(img):
     return np.uint8((img > 0) * 255)
@@ -42,9 +42,9 @@ def load_data(file, images):
     angles.columns = ['w', 'x', 'y', 'z', 'image_name']
     return angles
 
-def load_dataset(file, images, size):
+def load_dataset(file, images, size, train_per=0.8):
     dataset = load_data(file, images)
-    train = dataset.sample(frac=0.8).reset_index()
+    train = dataset.sample(frac=train_per).reset_index()
     val = dataset.drop(train.index).reset_index()
 
     train_images = np.zeros((train.shape[0], size[0], size[1], 3))
@@ -59,7 +59,7 @@ def load_dataset(file, images, size):
         filename = row['image_name']
         train_angles[index, :] = np.array([row['w'], row['x'], row['y'], row['z']])
 
-        im = np.array(Image.open(filename))
+        im = skimage.io.imread(filename) / 255
         im = crop_figure(im)
         im, _, _, _, _ = resize_image(im, min_dim=size[0], max_dim=size[1])
         train_images[index, :, :, :] = im[:, :, 0:3]
@@ -70,7 +70,7 @@ def load_dataset(file, images, size):
         filename = row['image_name']
         val_angles[index, :] = np.array([row['w'], row['x'], row['y'], row['z']])
 
-        im = np.array(Image.open(filename))
+        im = skimage.io.imread(filename) / 255
         im = crop_figure(im)
         im, _, _, _, _ = resize_image(im, min_dim=size[0], max_dim=size[1])
         val_images[index, :, :, :] = im[:, :, 0:3]

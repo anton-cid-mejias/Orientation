@@ -39,7 +39,7 @@ def main_or():
     weights = None#"logs/Cube_test/orientations_7900.h5"
 
     train_images, train_angles, val_images, val_angles = \
-        orientation_data.load_dataset(FILE_PATH, IMAGES_DIR, (128, 128))
+        orientation_data.load_dataset(FILE_PATH, IMAGES_DIR, (128, 128), train_per=0.8)
 
     # Loading model and weights
     or_model = model.OrientationModel("logs", config)
