@@ -1,5 +1,5 @@
 from src.data import FiguresDataset, load_figures_data
-from src import train, model, evaluate
+from src import train, model, evaluate, detect
 from src.config import Config
 
 def main():
@@ -26,10 +26,11 @@ def main():
         or_model.compile(weights)
 
     # Training
-    #train.train(or_model, (train_images, train_orientations), (val_images, val_orientations),
-    #            epochs=config.EPOCHS, weights=weights)
+    train.train(or_model, (train_images, train_orientations), (val_images, val_orientations),
+                epochs=config.EPOCHS)
 
-    evaluate.evaluate(or_model, val_images, val_orientations)
+    # Evaluation
+    #evaluate.evaluate(or_model, val_images, val_orientations)
 
 if __name__=="__main__":
     main()

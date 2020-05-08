@@ -126,3 +126,7 @@ class OrientationModel():
     def evaluate(self, x_test, y_test):
         results = self.keras_model.evaluate(x_test, y_test)
         return results
+
+    def predict(self, image):
+        output = self.keras_model.predict(image)
+        return output
