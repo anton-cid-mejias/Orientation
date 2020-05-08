@@ -130,7 +130,7 @@ def compute_geodesic_distance_from_two_matrices(m1, m2):
     return theta
 
 
-def test():
+def check():
     # Test normalize vector
     v = tf.constant([[5., 0., 0.], [2., 2., 4.], [0., 0., 7.]])
     normalized = normalize_vector(v)
@@ -164,16 +164,17 @@ def test():
     print(np.degrees(euler))
 
     # Geodesic error
-    angles1 = np.radians(np.array([33., -11., 79.]).astype(np.float))
+    angles1 = np.radians(np.array([[33., -11., 79.], [33., -11., 79.], [45., 70., -50.]]).astype(np.float))
     euler = tf.constant(angles1)
     rm1 = from_euler(euler)
-    angles2 = np.radians(np.array([32., 7.51, -109]).astype(np.float))
+    angles2 = np.radians(np.array([[32., 7.51, -109], [32., 7.51, -109], [-300, 55, 44]]).astype(np.float))
     euler = tf.constant(angles2)
     rm2 = from_euler(euler)
     error = compute_geodesic_distance_from_two_matrices(rm1, rm2)
+    error = tf.math.reduce_mean(error)
     error = sess.run(error)
     print(error)
 
 
 if __name__ == "__main__":
-    test()
+    check()

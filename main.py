@@ -5,7 +5,7 @@ def main():
     train_path = "data/Cube/train"
     val_path = "data/Cube/val"
     config_ = config.Config
-    weights = "logs/orientations_2100.h5"
+    weights = None#"logs/orientations_2100.h5"
 
     dataset_train = FiguresDataset()
     dataset_train.load_figures(train_path, "train_annotations.json")

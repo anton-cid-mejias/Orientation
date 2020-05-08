@@ -28,15 +28,15 @@ def orientation_graph(input_image):
 
     x = KL.Flatten()(x)
 
-    x = KL.Dense(1024, name="or_dense1", kernel_regularizer=l2(0.01), bias_regularizer=l2(0.01),)(x)
+    x = KL.Dense(512, name="or_dense1", kernel_regularizer=l2(0.01), bias_regularizer=l2(0.0001),)(x)
     x = KL.LeakyReLU(alpha=0.3)(x)
     x = KL.BatchNormalization(name='or_bn1')(x)
 
-    x = KL.Dense(1024, name="or_dense2", kernel_regularizer=l2(0.01), bias_regularizer=l2(0.01),)(x)
+    x = KL.Dense(512, name="or_dense2", kernel_regularizer=l2(0.01), bias_regularizer=l2(0.0001),)(x)
     x = KL.LeakyReLU(alpha=0.3)(x)
     x = KL.BatchNormalization(name='or_bn2')(x)
 
-    x = KL.Dense(1024, name="or_dense3", kernel_regularizer=l2(0.01), bias_regularizer=l2(0.01),)(x)
+    x = KL.Dense(512, name="or_dense3", kernel_regularizer=l2(0.01), bias_regularizer=l2(0.0001),)(x)
     x = KL.LeakyReLU(alpha=0.3)(x)
     x = KL.BatchNormalization(name='or_bn3')(x)
 
@@ -78,7 +78,10 @@ class OrientationModel():
             print("Loading weights \"%s\"..." % weights)
             self.keras_model.load_weights(weights)
 
-        self.keras_model.compile(optimizer=optimizer, loss=loss.orientation_loss)
+        def euc_dist_keras(y_true, y_pred):
+            return keras.backend.sqrt(keras.backend.sum(keras.backend.square(y_true - y_pred), axis=-1, keepdims=True))
+
+        self.keras_model.compile(optimizer=optimizer, loss=euc_dist_keras)#loss.orientation_loss)
 
     def train(self, images, gt_orientations, val_images, val_gt_orientations, epochs):
 

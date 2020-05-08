@@ -1,6 +1,7 @@
 import keras.backend as K
 import numpy as np
 from src import utils
+import tensorflow as tf
 
 def deg2rad(angles):
     return angles * np.pi / 180
@@ -16,6 +17,7 @@ def orientation_loss(target_matrices, pred_matrices):
     #target_matrices = utils.from_euler(target_orientations)
 
     thetas = utils.compute_geodesic_distance_from_two_matrices(target_matrices, pred_matrices)
-    loss = K.mean(thetas)
-
+    #thetas = tf.Print(thetas, [thetas])
+    loss = tf.math.reduce_mean(thetas)#K.mean(thetas)
+    #loss = tf.Print(loss, [loss])
     return loss
