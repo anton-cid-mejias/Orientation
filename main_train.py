@@ -6,7 +6,7 @@ def main_coco():
     train_path = "data/Cube/train"
     val_path = "data/Cube/val"
     config = Config()
-    weights = "logs/Cube_test/orientations_7900.h5"
+    weights = None#"logs/Cube_test/orientations_7900.h5"
 
     # Loading dataset
     dataset_train = FiguresDataset()
@@ -26,7 +26,7 @@ def main_coco():
 
     # Training
     train.train(or_model, (train_images, train_orientations), (val_images, val_orientations),
-                epochs=config.EPOCHS)
+                epochs=config.EPOCHS, angle='euler')
 
     # Evaluation
     #evaluate.evaluate(or_model, val_images, val_orientations)
@@ -53,4 +53,4 @@ def main_or():
     #evaluate.evaluate(or_model, val_images, val_orientations)
 
 if __name__=="__main__":
-    main_or()
+    main_coco()
