@@ -122,3 +122,7 @@ class OrientationModel():
             callbacks=callbacks
         )
         print('\nhistory dict:', history.history)
+
+    def evaluate(self, x_test, y_test):
+        results = self.keras_model.evaluate(x_test, y_test)
+        return results
