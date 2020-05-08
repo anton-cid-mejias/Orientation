@@ -22,8 +22,7 @@ def main_coco():
 
     # Loading model and weights
     or_model = model.OrientationModel("logs", config)
-    if weights is not None:
-        or_model.compile(weights)
+    or_model.compile(weights=weights)
 
     # Training
     train.train(or_model, (train_images, train_orientations), (val_images, val_orientations),
@@ -33,19 +32,18 @@ def main_coco():
     #evaluate.evaluate(or_model, val_images, val_orientations)
 
 def main_or():
-    IMAGES_DIR = "data\Cube_2.0\Images"
-    FILE_PATH = "data\Cube_2.0\cube_quat_angles.csv"
+    IMAGES_DIR = "data/Cube_2.0/Images"
+    FILE_PATH = "data/Cube_2.0/cube_quat_angles.csv"
 
     config = Config()
-    weights = "logs/Cube_test/orientations_7900.h5"
+    weights = None#"logs/Cube_test/orientations_7900.h5"
 
     train_images, train_angles, val_images, val_angles = \
         orientation_data.load_dataset(FILE_PATH, IMAGES_DIR, (128, 128))
 
     # Loading model and weights
     or_model = model.OrientationModel("logs", config)
-    if weights is not None:
-        or_model.compile(weights)
+    or_model.compile(weights=weights)
 
     # Training
     train.train(or_model, (train_images, train_angles), (val_images, val_angles),
