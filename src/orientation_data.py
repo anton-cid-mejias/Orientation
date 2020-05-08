@@ -44,7 +44,7 @@ def load_data(file, images):
 
 def load_dataset(file, images, size):
     dataset = load_data(file, images)
-    train = dataset.sample(frac=0.7).reset_index()
+    train = dataset.sample(frac=0.8).reset_index()
     val = dataset.drop(train.index).reset_index()
 
     train_images = np.zeros((train.shape[0], size[0], size[1], 3))

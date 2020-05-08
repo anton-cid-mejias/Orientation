@@ -101,7 +101,9 @@ class OrientationModel():
         ]
 
         # Tensorboard
-        tensorboard_cbk = keras.callbacks.TensorBoard(log_dir='logs')
+        tensorboard_cbk = keras.callbacks.TensorBoard(log_dir='logs',
+                                                      histogram_freq=1,
+                                                      batch_size=self.config.BATCH_SIZE)
         callbacks.append(tensorboard_cbk)
 
         # Scheduler
