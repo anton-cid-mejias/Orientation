@@ -106,7 +106,7 @@ class OrientationModel():
 
         # Scheduler
         def scheduler(epoch):
-            if epoch < 10000:
+            if epoch < 2000:
                 return self.config.LEARNING_RATE
             else:
                 return self.config.LEARNING_RATE * 0.1
