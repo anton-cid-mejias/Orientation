@@ -28,15 +28,15 @@ def orientation_graph(input_image):
 
     x = KL.Flatten()(x)
 
-    x = KL.Dense(512, name="or_dense1", kernel_regularizer=l2(0.01), bias_regularizer=l2(0.0001),)(x)
+    x = KL.Dense(512, name="or_dense1", kernel_regularizer=l2(0.0001), bias_regularizer=l2(0.0001),)(x)
     x = KL.LeakyReLU(alpha=0.3)(x)
     x = KL.BatchNormalization(name='or_bn1')(x)
 
-    x = KL.Dense(512, name="or_dense2", kernel_regularizer=l2(0.01), bias_regularizer=l2(0.0001),)(x)
+    x = KL.Dense(512, name="or_dense2", kernel_regularizer=l2(0.0001), bias_regularizer=l2(0.0001),)(x)
     x = KL.LeakyReLU(alpha=0.3)(x)
     x = KL.BatchNormalization(name='or_bn2')(x)
 
-    x = KL.Dense(512, name="or_dense3", kernel_regularizer=l2(0.01), bias_regularizer=l2(0.0001),)(x)
+    x = KL.Dense(512, name="or_dense3", kernel_regularizer=l2(0.0001), bias_regularizer=l2(0.0001),)(x)
     x = KL.LeakyReLU(alpha=0.3)(x)
     x = KL.BatchNormalization(name='or_bn3')(x)
 
