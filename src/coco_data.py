@@ -8,6 +8,7 @@ from pycocotools import mask as maskUtils
 import os
 from distutils.version import LooseVersion
 import random
+from src import data_augmentation
 
 import matplotlib.pyplot as plt
 
@@ -195,7 +196,7 @@ class FiguresDataset(Dataset):
         instance_images = []
         annotations = self.image_info[image_id]["annotations"]
 
-        image = skimage.io.imread(self.image_info[image_id]['path']) / 255
+        image = skimage.io.imread(self.image_info[image_id]['path'])# / 255
 
         for annotation in annotations:
             # y1, x1, w, h
@@ -447,3 +448,40 @@ def load_figures_data(dataset, config):
     images = np.concatenate(images, axis=0)
     return images, orientations
 
+def data_generator(x_data, y_data, batch_size=1, shuffle=True, augmentation=True):
+    index = -1
+    size = x_data.shape[0]
+
+    while True:  # Select files (paths/indices) for the batch
+        try:
+            index += 1
+            # Shuffle the data when stating a new epoch
+            if (index == 0) and shuffle:
+                shuffler = np.random.permutation(size)
+                x_data = x_data[shuffler]
+                y_data = y_data[shuffler]
+
+            slice = index * batch_size
+            portion = batch_size
+
+            # Restart index when reaching the last slice of the dataset
+            if  slice + batch_size >= size:
+                portion = size - slice
+                index = -1
+
+            x = x_data[slice:slice + portion]
+            y = y_data[slice:slice + portion]
+
+            # Apply data augmentation to each of the images
+            if augmentation:
+                # Transform images to the range [0, 255]
+                x = x * 255
+                x.astype(np.uint8)
+                x = data_augmentation.apply_augmentation(x)
+                # Transform images back the range [0, 1]
+                x = x / 255
+
+            yield (x, y)
+
+        except (GeneratorExit, KeyboardInterrupt):
+            raise

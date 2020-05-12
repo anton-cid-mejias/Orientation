@@ -1,8 +1,9 @@
 import keras.layers as KL
 import keras
 from keras.regularizers import l2
+import math
 
-from src import utils, loss
+from src import utils, coco_data
 
 def orientation_graph(input_image):
 
@@ -116,9 +117,24 @@ class OrientationModel():
         scheduler_cbk = keras.callbacks.LearningRateScheduler(scheduler)
         callbacks.append(scheduler_cbk)
 
+        # Data generator
+        steps = math.ceil(images.shape[0] / self.config.BATCH_SIZE)
+        train_generator = coco_data.data_generator(images, gt_orientations,
+                                                   batch_size=self.config.BATCH_SIZE,
+                                                   augmentation=True)
+
+        '''
         history = self.keras_model.fit(
             images, gt_orientations,
             batch_size=self.config.BATCH_SIZE,
+            epochs=epochs,
+            validation_data=(val_images, val_gt_orientations),
+            callbacks=callbacks
+        )'''
+
+        history = self.keras_model.fit_generator(
+            train_generator,
+            steps_per_epoch=steps,
             epochs=epochs,
             validation_data= (val_images, val_gt_orientations),
             callbacks=callbacks

@@ -4,3 +4,4 @@ class Config(object):
     INPUT_SIZE = 128
     BATCH_SIZE = 25
     EPOCHS = 10000#2000000
+    AUGMENTATION = True

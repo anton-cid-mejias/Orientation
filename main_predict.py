@@ -3,8 +3,8 @@ from src import model, detect, visualize, orientation_data
 from src.config import Config
 
 def main_coco():
-    val_path = "data/Cube/val"
-    weights = "logs/orientations_2300.h5"
+    val_path = "data/Octahedron/val"
+    weights = "logs/orientations_4000.h5"
     config = Config()
 
     dataset_val = FiguresDataset()
@@ -42,4 +42,4 @@ def main_or():
     visualize.show_results(val_images, predictions)
 
 if __name__=="__main__":
-    main_or()
+    main_coco()
