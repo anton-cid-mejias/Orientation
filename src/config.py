@@ -5,3 +5,4 @@ class Config(object):
     BATCH_SIZE = 25
     EPOCHS = 10000#2000000
     AUGMENTATION = True
+    LOSS = "euclidean" #geodesic or euclidean

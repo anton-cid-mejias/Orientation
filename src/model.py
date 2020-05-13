@@ -3,7 +3,7 @@ import keras
 from keras.regularizers import l2
 import math
 
-from src import utils, coco_data
+from src import utils, coco_data, loss
 
 def orientation_graph(input_image):
 
@@ -79,10 +79,12 @@ class OrientationModel():
             print("Loading weights \"%s\"..." % weights)
             self.keras_model.load_weights(weights)
 
-        def euc_dist_keras(y_true, y_pred):
-            return keras.backend.sqrt(keras.backend.sum(keras.backend.square(y_true - y_pred), axis=-1, keepdims=True))
-
-        self.keras_model.compile(optimizer=optimizer, loss=euc_dist_keras)#loss.orientation_loss)
+        if self.config.LOSS == "euclidean":
+            self.keras_model.compile(optimizer=optimizer, loss=loss.euc_dist_keras)
+        elif self.config.LOSS == "geodesic":
+            self.keras_model.compile(optimizer=optimizer, loss=loss.orientation_loss)
+        else:
+            raise Exception("Incorrect loss name in the configuration file")
 
     def train(self, images, gt_orientations, val_images, val_gt_orientations, epochs):
 
@@ -111,8 +113,10 @@ class OrientationModel():
         def scheduler(epoch):
             if epoch < 2000:
                 return self.config.LEARNING_RATE
-            else:
+            elif epoch < 4000:
                 return self.config.LEARNING_RATE * 0.1
+            else:
+                return self.config.LEARNING_RATE * 0.01
 
         scheduler_cbk = keras.callbacks.LearningRateScheduler(scheduler)
         callbacks.append(scheduler_cbk)

@@ -1,5 +1,6 @@
 import tensorflow as tf
 import numpy as np
+from . import loss
 
 # Copied from tensorflow graphics API
 # https://github.com/tensorflow/graphics/blob/master/tensorflow_graphics/geometry/transformation/rotation_matrix_3d.py
@@ -129,8 +130,39 @@ def compute_geodesic_distance_from_two_matrices(m1, m2):
 
     return theta
 
+def calculate_errors(errors):
+    mean = np.mean(errors)
+    std = np.std(errors)
+    max = np.max(errors)
+    return mean, std, max
 
-def check():
+
+def print_errors(mean, std, max):
+    print("Mean: %f" % mean)
+    print("Std: %f" % std)
+    print("Max: %f" % max)
+
+# Input: ground truth orientations 3x3 rotation matrix, predicted orientations 3x3 rotation matrix, image_ids
+def evaluate(gt_orientations, pred_orientations, image_ids):
+    gt_orientations = gt_orientations.astype(np.float32)
+
+    print("Evaluation")
+    # Geodesic distance
+    errors = compute_geodesic_distance_from_two_matrices(gt_orientations, pred_orientations) * 180 / np.pi
+    sess = tf.compat.v1.Session()
+    errors = sess.run(errors)
+    mean, std, max = calculate_errors(errors)
+    print("Geodesic distance: ")
+    print_errors(mean, std, max)
+
+    # Euclidean distance
+    errors = loss.euc_dist_keras(gt_orientations, pred_orientations)
+    errors = sess.run(errors)
+    mean, std, max = calculate_errors(errors)
+    print("Euclidean distance: ")
+    print_errors(mean, std, max)
+
+def main():
     # Test normalize vector
     v = tf.constant([[5., 0., 0.], [2., 2., 4.], [0., 0., 7.]])
     normalized = normalize_vector(v)
@@ -175,6 +207,5 @@ def check():
     error = sess.run(error)
     print(error)
 
-
 if __name__ == "__main__":
-    check()
+    main()

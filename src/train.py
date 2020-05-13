@@ -1,7 +1,7 @@
 from scipy.spatial.transform import Rotation as R
 import numpy as np
 
-def train(model, train_data, val_data, epochs=100, angle='quat'):
+def train(model, train_data, val_data, epochs=100, angle='euler'):
 
     # Transform euler angles to rotation matrices
     x_train = train_data[0]
