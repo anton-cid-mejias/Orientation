@@ -1,6 +1,8 @@
 import tensorflow as tf
 import numpy as np
 from . import loss
+from scipy.spatial.transform import Rotation as R
+import matplotlib.pyplot as plt
 
 # Copied from tensorflow graphics API
 # https://github.com/tensorflow/graphics/blob/master/tensorflow_graphics/geometry/transformation/rotation_matrix_3d.py
@@ -138,29 +140,69 @@ def calculate_errors(errors):
 
 
 def print_errors(mean, std, max):
+    print("*****************")
     print("Mean: %f" % mean)
     print("Std: %f" % std)
     print("Max: %f" % max)
+    print("*****************")
+
+def get_indices_from_max2min(array):
+    return np.flip(np.argsort(array))
 
 # Input: ground truth orientations 3x3 rotation matrix, predicted orientations 3x3 rotation matrix, image_ids
-def evaluate(gt_orientations, pred_orientations, image_ids):
+def evaluate(gt_orientations, pred_orientations, dataset, show=5):
     gt_orientations = gt_orientations.astype(np.float32)
 
     print("Evaluation")
     # Geodesic distance
-    errors = compute_geodesic_distance_from_two_matrices(gt_orientations, pred_orientations) * 180 / np.pi
+    geo_errors = compute_geodesic_distance_from_two_matrices(gt_orientations, pred_orientations) * 180 / np.pi
     sess = tf.compat.v1.Session()
-    errors = sess.run(errors)
-    mean, std, max = calculate_errors(errors)
+    geo_errors = sess.run(geo_errors)
+    mean, std, max = calculate_errors(geo_errors)
     print("Geodesic distance: ")
     print_errors(mean, std, max)
 
     # Euclidean distance
-    errors = loss.euc_dist_keras(gt_orientations, pred_orientations)
-    errors = sess.run(errors)
-    mean, std, max = calculate_errors(errors)
+    euc_errors = loss.euc_dist_keras(gt_orientations, pred_orientations)
+    euc_errors = sess.run(euc_errors)
+    mean, std, max = calculate_errors(euc_errors)
     print("Euclidean distance: ")
     print_errors(mean, std, max)
+
+    # Get the list of errors in a asc way
+    ann_per_image = len(dataset.image_info[0]["annotations"])
+    indices = get_indices_from_max2min(geo_errors)
+    image_indices = np.trunc(indices / ann_per_image).astype(int)
+    annotation_indices = indices % ann_per_image
+
+    # For each error get its pred_angles and gt_angles
+    print("\n*********************")
+    print("Errors in asc order: ")
+    print("*********************\n")
+    for i in range(0, image_indices.shape[0]):
+        id = image_indices[i]
+        ann_id = annotation_indices[i]
+        annotation = dataset.image_info[id]["annotations"][ann_id]
+        gt_angles = annotation['orientation']
+        pred_orientation = pred_orientations[indices[i]]
+        rotation = R.from_matrix(pred_orientation)
+        pred_angles = rotation.as_euler('ZYX', degrees=True)
+        geo_error = geo_errors[indices[i]]
+        euc_error = np.mean(euc_errors[indices[i]])
+        if i < show:
+            print("Number %i" % i)
+            print("Geodesic error: %f" % geo_error)
+            print("Euclidean error: %f" % euc_error)
+            print("Ground truth orientation: X: %f, Y: %f, Z: %f" % (gt_angles[0], gt_angles[1], gt_angles[2]))
+            print("Predicted orientation: X: %f, Y: %f, Z: %f" % (pred_angles[0], pred_angles[1], pred_angles[2]))
+
+    hist_geo_errors = geo_errors#np.round(geo_errors)
+    hist, _, _ = plt.hist(hist_geo_errors, bins=360, range=(0, 180))
+    plt.title('Geodesic distance error')
+    plt.xlabel("Error")
+    plt.ylabel("Frequency")
+    plt.savefig("predictions/geo_hist.png")
+
 
 def main():
     # Test normalize vector

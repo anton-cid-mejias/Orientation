@@ -8,9 +8,8 @@ from pycocotools import mask as maskUtils
 import os
 from distutils.version import LooseVersion
 import random
-from src import data_augmentation
-
-import matplotlib.pyplot as plt
+from src import data_augmentation, annotator
+from scipy.spatial.transform import Rotation as R
 
 # https://github.com/matterport/Mask_RCNN
 # Copied from utils.py
@@ -485,3 +484,24 @@ def data_generator(x_data, y_data, batch_size=1, shuffle=True, augmentation=True
 
         except (GeneratorExit, KeyboardInterrupt):
             raise
+
+def save_pred_annotations(pred_orientations, dataset):
+    i = 0
+    # Transform rotation matrix to euler
+    rotation = R.from_matrix(pred_orientations)
+    pred_orientations = rotation.as_euler('ZYX', degrees=True)
+    annGen = annotator.AnnotationsGenerator("Annotations that include the predicted orientation")
+    annGen.add_categories(dataset.class_names)
+    class_info = dataset.class_info
+    for id in dataset.image_ids:
+        image_info = dataset.image_info[id]
+        annotations = image_info['annotations']
+        annGen.add_image(image_info['path'], image_info['height'], image_info['width'])
+        for ann in annotations:
+            orientation = pred_orientations[i].tolist()
+            category = class_info[ann['category_id'] - 1]['name']
+            annGen.add_annotation(ann['image_id'], category, ann['bbox'], ann['area'], ann['segmentation'], orientation)
+
+        i += 1
+
+    annGen.save_json("predictions/pred_orientations_annotations.json")

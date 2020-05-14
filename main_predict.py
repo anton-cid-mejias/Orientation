@@ -1,5 +1,5 @@
 from src.coco_data import FiguresDataset, load_figures_data
-from src import model, detect, visualize, orientation_data, utils
+from src import model, detect, visualize, orientation_data, utils, coco_data
 from src.config import Config
 from scipy.spatial.transform import Rotation as R
 
@@ -23,7 +23,9 @@ def main_coco():
     predictions = detect.detect(or_model, val_images)
 
     gt_orientations = R.from_euler('ZYX', val_orientations, degrees=True).as_matrix()
-    utils.evaluate(gt_orientations, predictions, dataset_val.image_ids)
+    utils.evaluate(gt_orientations, predictions, dataset_val)
+
+    coco_data.save_pred_annotations(predictions, dataset_val)
 
     visualize.show_results(val_images, predictions)
 
