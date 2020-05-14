@@ -196,7 +196,7 @@ class FiguresDataset(Dataset):
         instance_images = []
         annotations = self.image_info[image_id]["annotations"]
 
-        image = skimage.io.imread(self.image_info[image_id]['path'])# / 255
+        image = skimage.io.imread(self.image_info[image_id]['path']) / 255
 
         for annotation in annotations:
             # y1, x1, w, h
