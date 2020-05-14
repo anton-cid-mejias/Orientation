@@ -476,7 +476,7 @@ def data_generator(x_data, y_data, batch_size=1, shuffle=True, augmentation=True
             if augmentation:
                 # Transform images to the range [0, 255]
                 x = x * 255
-                x.astype(np.uint8)
+                x = x.astype(np.uint8)
                 x = data_augmentation.apply_augmentation(x)
                 # Transform images back the range [0, 1]
                 x = x / 255
