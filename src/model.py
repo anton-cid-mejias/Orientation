@@ -105,7 +105,7 @@ class OrientationModel():
 
         # Tensorboard
         tensorboard_cbk = keras.callbacks.TensorBoard(log_dir='logs',
-                                                      histogram_freq=1,
+                                                      histogram_freq=0,
                                                       batch_size=self.config.BATCH_SIZE)
         callbacks.append(tensorboard_cbk)
 
@@ -141,7 +141,8 @@ class OrientationModel():
             steps_per_epoch=steps,
             epochs=epochs,
             validation_data= (val_images, val_gt_orientations),
-            callbacks=callbacks
+            callbacks=callbacks,
+            initial_epoch=self.config.INITIAL_EPOCH
         )
         print('\nhistory dict:', history.history)
 
