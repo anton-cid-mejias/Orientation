@@ -3,6 +3,7 @@ import numpy as np
 from . import loss
 from scipy.spatial.transform import Rotation as R
 import matplotlib.pyplot as plt
+import os
 
 # Copied from tensorflow graphics API
 # https://github.com/tensorflow/graphics/blob/master/tensorflow_graphics/geometry/transformation/rotation_matrix_3d.py
@@ -150,7 +151,7 @@ def get_indices_from_max2min(array):
     return np.flip(np.argsort(array))
 
 # Input: ground truth orientations 3x3 rotation matrix, predicted orientations 3x3 rotation matrix, image_ids
-def evaluate(gt_orientations, pred_orientations, dataset, show=5):
+def evaluate(gt_orientations, pred_orientations, dataset, save_dir, show=5):
     gt_orientations = gt_orientations.astype(np.float32)
 
     print("Evaluation")
@@ -201,7 +202,7 @@ def evaluate(gt_orientations, pred_orientations, dataset, show=5):
     plt.title('Geodesic distance error')
     plt.xlabel("Error")
     plt.ylabel("Frequency")
-    plt.savefig("predictions/geo_hist.png")
+    plt.savefig(os.path.join(save_dir, "geo_hist.png"))
 
 
 def main():

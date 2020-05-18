@@ -4,15 +4,13 @@ from src.config import Config
 from scipy.spatial.transform import Rotation as R
 
 def main_coco():
-    dataset_path = "data/Detections"
+    val_path = "data/Octahedron/val"
     weights = "logs/Octahedron_aug/orientations_4900.h5"
-    annotations = "prediction_annotations_octahedron.json"
-    pred_dir = "predictions"
-
+    evaluation_dir = "evaluation"
     config = Config()
 
     dataset_val = FiguresDataset()
-    dataset_val.load_figures(dataset_path, annotations)
+    dataset_val.load_figures(val_path, "val_annotations.json")
     dataset_val.prepare()
 
     val_images, val_orientations = load_figures_data(dataset_val, config)
@@ -25,9 +23,12 @@ def main_coco():
     # Inference
     predictions = detect.detect(or_model, val_images)
 
-    coco_data.save_pred_annotations(predictions, dataset_val, dataset_path, pred_dir)
+    gt_orientations = R.from_euler('ZYX', val_orientations, degrees=True).as_matrix()
+    utils.evaluate(gt_orientations, predictions, dataset_val, evaluation_dir)
 
-    visualize.show_results(val_images, predictions, pred_dir)
+    coco_data.save_pred_annotations(predictions, dataset_val, val_path, evaluation_dir)
+
+    visualize.show_results(val_images, predictions, evaluation_dir)
 
 #IMPORTANT: IMAGES VALUES IN RANGE [0,1]
 def main_or():

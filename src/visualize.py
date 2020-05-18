@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 from scipy.spatial.transform import Rotation as R
+import os
 
-def show_results(images, predictions):
+def show_results(images, predictions, save_dir):
     for i in range(0, images.shape[0]):
         image = images[i, :, :, :]
         rot_matrix = predictions[i, :, :]
@@ -19,6 +20,6 @@ def show_results(images, predictions):
         ax.text(10, 10, quat_text, color='black', size=50, bbox=dict(facecolor='w', alpha=.9))
         ax.text(10, 30, euler_text, color='black', size=50, bbox=dict(facecolor='w', alpha=.9))
 
-        print("Saving predictions\%i_pred.png..." % i)
-        plt.savefig("predictions\%i_pred.png" % i)
+        print("Saving %s/%i_pred.png..." % (save_dir, i))
+        plt.savefig(os.path.join(save_dir, "%i_pred.png" % i))
         plt.close(fig=fig)

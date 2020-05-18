@@ -194,13 +194,19 @@ class FiguresDataset(Dataset):
     def load_instance_images(self, image_id, size=64):
         instance_images = []
         annotations = self.image_info[image_id]["annotations"]
+        image_path = self.image_info[image_id]['path']
 
-        image = skimage.io.imread(self.image_info[image_id]['path']) / 255
+        image = skimage.io.imread(image_path)
+
+        if image.ndim < 3:
+            image = skimage.color.gray2rgb(image)
+
+        image = image / 255
 
         for annotation in annotations:
             # y1, x1, w, h
             bbox = annotation['bbox']
-            instance_image = image[bbox[1]:bbox[1] + bbox[3], bbox[0]:bbox[0] + bbox[2], :]
+            instance_image = image[bbox[1]:bbox[1] + bbox[3], bbox[0]:bbox[0] + bbox[2]]
             instance_image, _, _, _, _ = resize_image(instance_image, min_dim=size, max_dim=size)
             #fig, ax = plt.subplots(figsize=(15, 15))
             #ax.imshow(instance_image)
@@ -485,7 +491,7 @@ def data_generator(x_data, y_data, batch_size=1, shuffle=True, augmentation=True
         except (GeneratorExit, KeyboardInterrupt):
             raise
 
-def save_pred_annotations(pred_orientations, dataset):
+def save_pred_annotations(pred_orientations, dataset, root_path, save_dir):
     i = 0
     # Transform rotation matrix to euler
     rotation = R.from_matrix(pred_orientations)
@@ -496,7 +502,8 @@ def save_pred_annotations(pred_orientations, dataset):
     for id in dataset.image_ids:
         image_info = dataset.image_info[id]
         annotations = image_info['annotations']
-        annGen.add_image(image_info['path'], image_info['height'], image_info['width'])
+        path = image_info['path'].replace(root_path, "").replace("\\", "").replace("/", "")
+        annGen.add_image(path, image_info['height'], image_info['width'])
         for ann in annotations:
             orientation = pred_orientations[i].tolist()
             category = class_info[ann['category_id'] - 1]['name']
@@ -504,4 +511,5 @@ def save_pred_annotations(pred_orientations, dataset):
 
         i += 1
 
-    annGen.save_json("predictions/pred_orientations_annotations.json")
+    path = os.path.join(save_dir, "pred_orientations_annotations.json")
+    annGen.save_json(path)

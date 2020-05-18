@@ -6,7 +6,7 @@ def main_coco():
     train_path = "data/Octahedron/train"
     val_path = "data/Octahedron/val"
     config = Config()
-    weights = "logs/orientations_2000.h5"
+    weights = None#"logs/orientations_2000.h5"
 
     # Loading dataset
     dataset_train = FiguresDataset()

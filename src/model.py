@@ -121,6 +121,9 @@ class OrientationModel():
         scheduler_cbk = keras.callbacks.LearningRateScheduler(scheduler)
         callbacks.append(scheduler_cbk)
 
+        csv_logger = keras.callbacks.CSVLogger("logs/model_history_log.csv", append=True)
+        callbacks.append(csv_logger)
+
         # Data generator
         steps = math.ceil(images.shape[0] / self.config.BATCH_SIZE)
         train_generator = coco_data.data_generator(images, gt_orientations,

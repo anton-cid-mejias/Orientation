@@ -6,4 +6,4 @@ class Config(object):
     EPOCHS = 10000
     AUGMENTATION = True
     LOSS = "euclidean" #geodesic or euclidean
-    INITIAL_EPOCH = 2000
+    INITIAL_EPOCH = 0
