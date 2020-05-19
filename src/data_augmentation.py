@@ -4,7 +4,7 @@ def apply_augmentation(images):
     seq = iaa.Sequential([
         # Blur
         iaa.SomeOf((0, 1), [
-            iaa.GaussianBlur(sigma=(0.0, 2.5)),
+            iaa.GaussianBlur(sigma=(1., 2.5)),
             iaa.AverageBlur(k=(2, 5))
         ]),
         # Rotation and padding
