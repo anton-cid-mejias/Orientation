@@ -1,21 +1,21 @@
 from src.coco_data import FiguresDataset, load_figures_data
 from src import model, detect, visualize, orientation_data, utils, coco_data
 from src.config import Config
-from scipy.spatial.transform import Rotation as R
 
 def main_coco():
     dataset_path = "data/Detections"
     weights = "logs/Octahedron_aug/orientations_4900.h5"
     annotations = "prediction_annotations_octahedron.json"
-    pred_dir = "predictions"
+    pred_dir = "predictions/3x3_dil_mask"
 
     config = Config()
 
-    dataset_val = FiguresDataset()
-    dataset_val.load_figures(dataset_path, annotations)
-    dataset_val.prepare()
+    dataset = FiguresDataset()
+    dataset.load_figures(dataset_path, annotations)
+    dataset.prepare()
 
-    val_images, val_orientations = load_figures_data(dataset_val, config)
+    images, orientations, masks = load_figures_data(dataset, config, mask=True)
+    images = utils.apply_mask(images, masks, extra=3)
 
     # Loading model and weights
     or_model = model.OrientationModel("logs", config)
@@ -23,11 +23,11 @@ def main_coco():
     or_model.compile(weights)
 
     # Inference
-    predictions = detect.detect(or_model, val_images)
+    predictions = detect.detect(or_model, images)
 
-    coco_data.save_pred_annotations(predictions, dataset_val, dataset_path, pred_dir)
+    coco_data.save_pred_annotations(predictions, dataset, dataset_path, pred_dir)
 
-    visualize.show_results(val_images, predictions, pred_dir)
+    visualize.show_results(images, predictions, pred_dir)
 
 #IMPORTANT: IMAGES VALUES IN RANGE [0,1]
 def main_or():

@@ -13,7 +13,7 @@ def main_coco():
     dataset_val.load_figures(val_path, "val_annotations.json")
     dataset_val.prepare()
 
-    val_images, val_orientations = load_figures_data(dataset_val, config)
+    val_images, val_orientations, _ = load_figures_data(dataset_val, config, mask=False)
 
     # Loading model and weights
     or_model = model.OrientationModel("logs", config)

@@ -208,15 +208,36 @@ class FiguresDataset(Dataset):
             bbox = annotation['bbox']
             instance_image = image[bbox[1]:bbox[1] + bbox[3], bbox[0]:bbox[0] + bbox[2]]
             instance_image, _, _, _, _ = resize_image(instance_image, min_dim=size, max_dim=size)
-            #fig, ax = plt.subplots(figsize=(15, 15))
-            #ax.imshow(instance_image)
-            #plt.savefig("test2")
+
             instance_image = np.expand_dims(instance_image, axis=0)
             instance_images.append(instance_image)
 
         instance_images = np.concatenate(instance_images, axis=0)
 
         return instance_images
+
+    def load_instance_masks(self, image_id, size=64):
+        masks = []
+
+        image_info = self.image_info[image_id]
+        annotations = image_info["annotations"]
+
+        for annotation in annotations:
+            # y1, x1, w, h
+            bbox = annotation['bbox']
+            mask = self.annToMask(annotation, image_info["height"],
+                               image_info["width"])
+
+            mask = mask[bbox[1]:bbox[1] + bbox[3], bbox[0]:bbox[0] + bbox[2]]
+            mask = np.expand_dims(mask, axis=2)
+            mask, _, _, _, _ = resize_image(mask, min_dim=size, max_dim=size)
+            mask = mask.reshape(1, mask.shape[0], mask.shape[1])
+
+            masks.append(mask)
+
+        masks = np.concatenate(masks, axis=0)
+        return masks
+
 
     def load_orientation(self, image_id):
 
@@ -439,19 +460,25 @@ def resize_image(image, min_dim=None, max_dim=None, min_scale=None, mode="square
         raise Exception("Mode {} not supported".format(mode))
     return image.astype(image_dtype), window, scale, padding, crop
 
-def load_figures_data(dataset, config):
+def load_figures_data(dataset, config, mask=False):
     orientations = []
     images = []
+    masks = []
     for image_id in dataset.image_ids:
         gt_orientations = dataset.load_orientation(image_id)
         orientations.append(gt_orientations)
 
         instances = dataset.load_instance_images(image_id, size=config.INPUT_SIZE)
+        instance_masks = dataset.load_instance_masks(image_id, size=config.INPUT_SIZE)
         images.append(instances)
+        masks.append(instance_masks)
 
     orientations = np.concatenate(orientations, axis=0)
     images = np.concatenate(images, axis=0)
-    return images, orientations
+    if mask:
+        masks = np.concatenate(masks, axis=0)
+
+    return images, orientations, masks
 
 def data_generator(x_data, y_data, batch_size=1, shuffle=True, augmentation=True):
     index = -1

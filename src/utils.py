@@ -4,7 +4,7 @@ from . import loss
 from scipy.spatial.transform import Rotation as R
 import matplotlib.pyplot as plt
 import os
-
+import cv2
 # Copied from tensorflow graphics API
 # https://github.com/tensorflow/graphics/blob/master/tensorflow_graphics/geometry/transformation/rotation_matrix_3d.py
 def _build_matrix_from_sines_and_cosines(sin_angles, cos_angles):
@@ -132,6 +132,17 @@ def compute_geodesic_distance_from_two_matrices(m1, m2):
     theta = tf.math.acos(cos)
 
     return theta
+
+def apply_mask(images, masks, extra=0):
+    if extra > 0:
+        kernel = np.ones((extra+1, extra+1))
+        masks = cv2.dilate(masks, kernel, iterations=1)
+
+    masks = np.expand_dims(masks, axis=3)
+    masks = np.repeat(masks, 3, axis=3)
+    images = images*masks
+    return images
+
 
 def calculate_errors(errors):
     mean = np.mean(errors)
