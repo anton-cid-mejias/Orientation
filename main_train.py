@@ -3,10 +3,10 @@ from src import train, model, orientation_data
 from src.config import Config
 
 def main_coco():
-    train_path = "data/Octahedron_2.0/train"
-    val_path = "data/Octahedron_2.0/val"
+    train_path = "data/Hexagon_2.0/train"
+    val_path = "data/Hexagon_2.0/val"
     config = Config()
-    weights = "logs/orientations_4900.h5"
+    weights = None#"logs/orientations_4900.h5"
 
     # Loading dataset
     dataset_train = FiguresDataset()
