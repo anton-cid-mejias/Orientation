@@ -535,8 +535,7 @@ def save_pred_annotations(pred_orientations, dataset, root_path, save_dir):
             orientation = pred_orientations[i].tolist()
             category = class_info[ann['category_id'] - 1]['name']
             annGen.add_annotation(ann['image_id'], category, ann['bbox'], ann['area'], ann['segmentation'], orientation)
-
-        i += 1
+            i += 1
 
     path = os.path.join(save_dir, "pred_orientations_annotations.json")
     annGen.save_json(path)
