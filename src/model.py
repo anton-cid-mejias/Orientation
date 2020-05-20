@@ -121,7 +121,7 @@ class OrientationModel():
         scheduler_cbk = keras.callbacks.LearningRateScheduler(scheduler)
         callbacks.append(scheduler_cbk)
 
-        csv_logger = keras.callbacks.CSVLogger("logs/model_history_log.csv", append=True)
+        csv_logger = keras.callbacks.CSVLogger("logs/model_history_log.csv", append=False)
         callbacks.append(csv_logger)
 
         # Data generator
