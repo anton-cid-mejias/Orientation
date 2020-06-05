@@ -4,9 +4,9 @@ from src.config import Config
 
 def main_coco():
     dataset_path = "data/Detections"
-    weights = "logs/Octahedron_aug/orientations_4900.h5"
-    annotations = "prediction_annotations_octahedron.json"
-    pred_dir = "predictions/3x3_dil_mask"
+    weights = "logs/Hexagon_aug_2.0/orientations_3700.h5"
+    annotations = "prediction_annotations_hexagon.json"
+    pred_dir = "predictions/Hexagon_2.0"
 
     config = Config()
 
@@ -15,7 +15,7 @@ def main_coco():
     dataset.prepare()
 
     images, orientations, masks = load_figures_data(dataset, config, mask=True)
-    images = utils.apply_mask(images, masks, extra=3)
+    #images = utils.apply_mask(images, masks, extra=3)
 
     # Loading model and weights
     or_model = model.OrientationModel("logs", config)

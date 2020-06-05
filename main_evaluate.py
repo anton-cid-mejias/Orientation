@@ -4,8 +4,8 @@ from src.config import Config
 from scipy.spatial.transform import Rotation as R
 
 def main_coco():
-    val_path = "data/Octahedron/val"
-    weights = "logs/Octahedron_aug/orientations_4900.h5"
+    val_path = "data/Hexagon_2.0/val"
+    weights = "logs/Hexagon_aug_2.0/orientations_3700.h5"
     evaluation_dir = "evaluation"
     config = Config()
 
