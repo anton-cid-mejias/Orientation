@@ -5,8 +5,8 @@ from src.config import Config
 def main_coco():
     dataset_path = "data/Detections"
     weights = "logs/Hexagon_aug_2.0/orientations_3700.h5"
-    annotations = "prediction_annotations_hexagon.json"
-    pred_dir = "predictions/Hexagon_2.0"
+    annotations = "prediction_annotations_hexagon_2.json"
+    pred_dir = "predictions/Hexagon_3.0"
 
     config = Config()
 

@@ -3,8 +3,8 @@ from src import train, model, orientation_data
 from src.config import Config
 
 def main_coco():
-    train_path = "data/Cube_smooth/train"
-    val_path = "data/Cube_smooth/val"
+    train_path = "data/Needle/train"
+    val_path = "data/Needle/val"
     config = Config()
     weights = None#"logs/orientations_4900.h5"
 
