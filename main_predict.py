@@ -3,10 +3,18 @@ from src import model, detect, visualize, orientation_data, utils, coco_data
 from src.config import Config
 
 def main_coco():
-    dataset_path = "data/Detections"
-    weights = "logs/Hexagon_aug_2.0/orientations_3700.h5"
-    annotations = "prediction_annotations_hexagon_2.json"
-    pred_dir = "predictions/Hexagon_3.0"
+    dataset_path = "data/Detections/Cube_0.9"
+    #dataset_path = "data/Detections/Final/Cube"
+    #dataset_path = "data/Detections/Final/Octahedron"
+    #dataset_path = "data/Detections/Final/Needle"
+    #dataset_path = "data/Detections/Final/Hexagon_lat"
+
+    weights = "logs/Final/Cube/orientations_2900.h5"
+    #weights = "logs/Final/Cube/orientations_2900.h5"
+    #weights = "logs/Final/Needle/orientations_3000.h5"
+    #weights = "logs/Final/Octahedron/orientations_2900.h5"
+    annotations = "prediction_annotations_cube.json"
+    pred_dir = "predictions/Final"
 
     config = Config()
 
