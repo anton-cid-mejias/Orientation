@@ -1,6 +1,7 @@
 from src.coco_data import FiguresDataset, load_figures_data
 from src import model, detect, visualize, orientation_data, utils, coco_data
 from src.config import Config
+import time
 
 def main_coco():
     dataset_path = "data/Detections/Cube_0.9"
@@ -31,7 +32,10 @@ def main_coco():
     or_model.compile(weights)
 
     # Inference
+    start = time.time()
     predictions = detect.detect(or_model, images)
+    end = time.time()
+    print(end - start)
 
     coco_data.save_pred_annotations(predictions, dataset, dataset_path, pred_dir)
 
