@@ -4,17 +4,18 @@ from src.config import Config
 import time
 
 def main_coco():
-    dataset_path = "data/Detections/Cube_0.9"
-    #dataset_path = "data/Detections/Final/Cube"
+    #dataset_path = "data/Detections/Cube_0.9"
+    dataset_path = "data/Detections/Final/Cube"
     #dataset_path = "data/Detections/Final/Octahedron"
     #dataset_path = "data/Detections/Final/Needle"
     #dataset_path = "data/Detections/Final/Hexagon_lat"
 
-    weights = "logs/Final/Cube/orientations_2900.h5"
+    #weights = "logs/Final/Cube/orientations_2900.h5"
     #weights = "logs/Final/Cube/orientations_2900.h5"
     #weights = "logs/Final/Needle/orientations_3000.h5"
     #weights = "logs/Final/Octahedron/orientations_2900.h5"
-    annotations = "prediction_annotations_cube.json"
+    weights = "logs/Random/Cube/orientations_1200.h5"
+    annotations = "prediction_annotations_90.json"
     pred_dir = "predictions/Final"
 
     config = Config()

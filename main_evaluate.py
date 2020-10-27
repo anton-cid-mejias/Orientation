@@ -8,11 +8,11 @@ def main_coco():
     #val_path = "data/Definitive/Cube/val"
     #val_path = "data/Definitive/Octahedron/val"
     #val_path = "data/Definitive/Needle/val"
-    val_path = "data/Random/Octahedron/val"
+    val_path = "data/Random/Cube/val"
     #weights = "logs/Final/Hexagon/orientations_2900.h5"
     #weights = "logs/Final/Cube/orientations_2900.h5"
     #weights = "logs/Final/Needle/orientations_3000.h5"
-    weights = "logs/Random/Octahedron/orientations_2100.h5"
+    weights = "logs/Random/Cube/orientations_1200.h5"
     #weights = "logs/Final/Octahedron/orientations_2900.h5"
     evaluation_dir = "evaluation"
     config = Config()
